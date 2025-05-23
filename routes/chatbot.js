@@ -110,6 +110,7 @@ router.get('/:flowId/:userId', async (req, res) => {
         return res.status(403).json({ message: 'Invalid request origin' });
       }
     }
+    
 
     // Serve chatbot data
     res.set('Content-Security-Policy', "default-src 'self'; script-src 'self' https://custom-gpt-backend-six.vercel.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*; frame-ancestors *; connect-src 'self' https://custom-gpt-backend-six.vercel.app");
