@@ -60,6 +60,8 @@ app.use(cors({
       "http://localhost:8000",
       "*",
     ];
+      allowedHeaders: ['Content-Type', 'Accept']
+
     console.log(`CORS Origin: ${origin}`);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
