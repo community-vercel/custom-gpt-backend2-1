@@ -75,23 +75,27 @@ router.get('/:flowId/:userId', async (req, res) => {
     const { flowId, userId } = req.params;
     const { domain, preview } = req.query;
     const origin = req.get('Origin') || '';
-    const isPreview = preview === 'true';
+    const isPreview = preview === 'true'; // Check if preview mode is enabled
 
+    // Validate input parameters
     if (!flowId || !userId || (!isPreview && !domain)) {
       console.error(`[Chatbot] Missing parameters - flowId: ${flowId}, userId: ${userId}, domain: ${domain}`);
       return res.status(400).json({ message: 'Missing flowId, userId, or domain' });
     }
 
+    // Find the flow
     const flow = await Flow.findOne({
       _id: flowId,
       userId,
     });
 
+    // Check if flow exists
     if (!flow) {
       console.error(`[Chatbot] Flow not found for flowId: ${flowId}, userId: ${userId}`);
       return res.status(404).json({ message: 'Flow not found' });
     }
 
+    // Normalize and validate website domain (skip in preview mode)
     if (!isPreview) {
       const normalizedDomain = domain.replace(/^https?:\/\//, '').replace(/\/$/, '');
       if (flow.websiteDomain !== normalizedDomain) {
@@ -99,6 +103,7 @@ router.get('/:flowId/:userId', async (req, res) => {
         return res.status(403).json({ message: 'Invalid or unauthorized domain' });
       }
 
+      // Validate request origin (optional, for additional security)
       const normalizedOrigin = origin.replace(/^https?:\/\//, '').replace(/\/$/, '');
       if (origin && normalizedOrigin !== flow.websiteDomain) {
         console.error(`[Chatbot] Origin mismatch - expected: ${flow.websiteDomain}, received: ${normalizedOrigin}`);
@@ -106,15 +111,8 @@ router.get('/:flowId/:userId', async (req, res) => {
       }
     }
 
-    res.set('Content-Security-Policy', `
-      default-src 'self';
-      script-src 'self' http://localhost:5000 https://custom-gpt-backend-six.vercel.app;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      font-src https://fonts.gstatic.com;
-      img-src 'self' data: https://*;
-      frame-ancestors *;
-      connect-src 'self' http://localhost:5000 https://custom-gpt-backend-six.vercel.app
-    `);
+    // Serve chatbot data
+    res.set('Content-Security-Policy', "default-src 'self'; script-src 'self' https://custom-gpt-backend-six.vercel.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*; frame-ancestors *; connect-src 'self' https://custom-gpt-backend-six.vercel.app");
 
     res.send(`
       <!DOCTYPE html>
@@ -122,8 +120,8 @@ router.get('/:flowId/:userId', async (req, res) => {
       <head>
         <title>Chatbot</title>
         <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <script src="https://custom-gpt-backend-six.vercel.app/api/chatbot/script.js"></script>
-        <script src="https://custom-gpt-backend-six.vercel.app/api/chatbot/config.js?flowId=${req.params.flowId}&userId=${req.params.userId}&primary=${encodeURIComponent(req.query.primary || '#6366f1')}&secondary=${encodeURIComponent(req.query.secondary || '#f59e0b')}&background=${encodeURIComponent(req.query.background || '#f8fafc')}&text=${encodeURIComponent(req.query.text || '#1f2937')}&name=${encodeURIComponent(req.query.name || 'Assistant')}&avatar=${encodeURIComponent(req.query.avatar || 'https://img.freepik.com/free-vector/chatbot-chat-message-vectorart_78370-4104.jpg?semt=ais_hybrid&w=200')}"></script>
+        <script src="/api/chatbot/script.js"></script>
+        <script src="/api/chatbot/config.js?flowId=${req.params.flowId}&userId=${req.params.userId}&primary=${encodeURIComponent(req.query.primary || '#6366f1')}&secondary=${encodeURIComponent(req.query.secondary || '#f59e0b')}&background=${encodeURIComponent(req.query.background || '#f8fafc')}&text=${encodeURIComponent(req.query.text || '#1f2937')}&name=${encodeURIComponent(req.query.name || 'Assistant')}&avatar=${encodeURIComponent(req.query.avatar || 'https://img.freepik.com/free-vector/chatbot-chat-message-vectorart_78370-4104.jpg?semt=ais_hybrid&w=200')}"></script>
         <script src="/chatbot-init.js"></script>
       </head>
       <body>
@@ -132,7 +130,6 @@ router.get('/:flowId/:userId', async (req, res) => {
       </html>
     `);
   } catch (error) {
-    console.error('[Chatbot] Error in chatbot route:', error);
     res.status(500).json({ message: 'Failed to load chatbot', error: error.message });
   }
 });
