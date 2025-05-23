@@ -41,9 +41,9 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       frameAncestors: ["*"], // Allow all network schemes
-      scriptSrc: ["'self'", "http://localhost:5000"],
+      scriptSrc: ["'self'", "https://custom-gpt-backend-six.vercel.app"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      connectSrc: ["'self'", "http://localhost:5000"],
+      connectSrc: ["'self'", "https://custom-gpt-backend-six.vercel.app"],
     },
   },
 }));
@@ -55,7 +55,7 @@ app.use(cors({
       process.env.FRONTEND_URL,
       "http://localhost:3000",
       "http://localhost:3001",
-      "http://localhost:5000",
+      "https://custom-gpt-backend-six.vercel.app",
       "http://localhost",
       "http://localhost:8000",
       "*",
