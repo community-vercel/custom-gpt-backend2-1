@@ -53,7 +53,7 @@ app.use(cors({
   origin: (origin, callback) => {
     const allowedOrigins = [
       process.env.FRONTEND_URL,
-      "http://localhost:3000",
+      "https://custom-gpt-builder-frontends-lvhs.vercel.app",
       "http://localhost:3001",
       "https://custom-gpt-backend-six.vercel.app",
       "http://localhost",

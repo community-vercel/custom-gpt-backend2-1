@@ -92,8 +92,8 @@ router.get('/getpackages', async (req, res) => {
           },
         ],
         mode: pkg.billingPeriod === 'month' || pkg.billingPeriod === 'year' ? 'subscription' : 'payment',
-        success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `http://localhost:3000/cancel`,
+        success_url: `https://custom-gpt-builder-frontends-lvhs.vercel.app/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://custom-gpt-builder-frontends-lvhs.vercel.app/cancel`,
         metadata: {
           packageId,
           userId,
