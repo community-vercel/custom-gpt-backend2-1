@@ -4,7 +4,7 @@ const router = express.Router();
 const Flow = require('../models/Flow');
 
 router.use(cors({
-  origin: ['http://localhost:3000', 'https://your-frontend.com'], // Replace with your frontend's origin
+  origin: ['http://localhost:3000', 'https://custom-gpt-builder-frontends-lvhs.vercel.app'], // Replace with your frontend's origin
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Accept']
 }));
