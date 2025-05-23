@@ -34,7 +34,7 @@ const app = express();
 // index.js (partial update)
 // index.js (partial update)
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.set('trust proxy', 1);
 // CSP configuration
 app.use(helmet({
   contentSecurityPolicy: {
